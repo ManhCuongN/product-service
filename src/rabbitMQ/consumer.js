@@ -3,7 +3,7 @@ const amqp = require('amqplib')
 
 const runConsumer = async() => {
     try {
-        const connection = await amqp.connect('amqp://guest:guest@localhost')
+        const connection = await amqp.connect('amqps://ejaqrslc:FdbEYeWt40a6ggQ8zhoALDTREg1wcFUf@gerbil.rmq.cloudamqp.com/ejaqrslc')
         const channel = await connection.createChannel()
 
         const queueName = 'test-topic'

@@ -252,7 +252,7 @@ class ProductFactory {
 
 
     static async writeDataCSV2() {
-        const res = await axios.get("http://localhost:3055/v1/api/product")
+        const res = await axios.get("product-service-production-0ee8.up.railway.app/v1/api/product")
         const dataWithPaymentMethod = res.data.metadata.map(item => {
             return { ...item, paymentMethod: 'COD/VNPAY', Brand: item.product_attributes.brand };
 

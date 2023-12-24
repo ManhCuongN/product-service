@@ -25,7 +25,7 @@ const runFollowShopConsumer = async() => {
               }
               
                 await AccessService.insertFollower(shopId, userId)
-                await axios.post(`http://localhost:3088/api/s3/chat/create`,data)
+                await axios.post(`https://system-service-production.up.railway.app//api/s3/chat/create`,data)
         }, {
             noAck: true
         })
@@ -56,7 +56,7 @@ const runUnFollowShopConsumer = async() => {
                 receiverId: shopId
               }
                 await AccessService.removeFollow(shopId, userId)
-                await axios.post(`http://localhost:3088/api/s3/chat/delete`,data)
+                await axios.post(`https://system-service-production.up.railway.app//api/s3/chat/delete`,data)
 
         }, {
             noAck: true

@@ -1,9 +1,9 @@
 const configURL = {
     development: {
-      urlRabbitMQ: "amqp://guest:guest@localhost",
+      urlRabbitMQ: "amqps://ejaqrslc:FdbEYeWt40a6ggQ8zhoALDTREg1wcFUf@gerbil.rmq.cloudamqp.com/ejaqrslc",
     }
    
   };
   
 module.exports = configURL
-  
+// amqp://guest:guest@localhost
