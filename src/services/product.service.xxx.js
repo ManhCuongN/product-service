@@ -10,6 +10,7 @@ const { findAllDraftsForShop,
     unPublishProductByShop,
     searchProductByUser,
     findAllProductsByShop,
+    searchMulti,
     findAllProducts, findProduct, updateProductById, deleteProduct
 } = require('../models/repositories/product.repo')
 const { getFollowByShop } = require("../models/repositories/shop.repo")
@@ -114,6 +115,14 @@ class ProductFactory {
     static async findAllProducts({ limit = 50, sort = 'ctime', page = 1, filter = { isPulished: true, isDeleted: false } }) {
         return await findAllProducts({
             limit, sort, page, filter,
+            select: ['product_name', 'product_description', 'product_shop', 'product_price', 'product_thumb', 'product_ratingAverage', 'product_type', 'product_slug', 'product_images', 'product_attributes']
+        })
+    }
+
+    static async searchMulti({ limit = 50, sort = 'ctime', page = 1, filter = {} }) {
+        const parsedFilter = filter ? JSON.parse(filter) : {};
+        return await searchMulti({
+            limit, sort, page, filter: parsedFilter,
             select: ['product_name', 'product_description', 'product_shop', 'product_price', 'product_thumb', 'product_ratingAverage', 'product_type', 'product_slug', 'product_images', 'product_attributes']
         })
     }
@@ -252,7 +261,7 @@ class ProductFactory {
 
 
     static async writeDataCSV2() {
-        const res = await axios.get("product-service-production-0ee8.up.railway.app/v1/api/product")
+        const res = await axios.get("http://localhost:3055/v1/api/product")
         const dataWithPaymentMethod = res.data.metadata.map(item => {
             return { ...item, paymentMethod: 'COD/VNPAY', Brand: item.product_attributes.brand };
 

@@ -91,6 +91,31 @@ const findAllProducts = async ({ limit, sort, page, filter, select }) => {
     return products
 }
 
+const searchMulti = async ({ limit, sort, page, filter, select }) => {
+    console.log("limi", filter);
+
+    // Đảm bảo filter là một đối tượng
+    const filterObject = filter || {};
+
+    // Thêm điều kiện tìm kiếm cho product_price dưới một số tiền cụ thể
+    if (filterObject.product_price) {
+        filterObject.product_price = { $lt: filterObject.product_price };
+    }
+
+    const skip = (page - 1) * limit;
+    const sortBy = sort === 'ctime' ? { _id: -1 } : { _id: 1 };
+
+    // Thực hiện tìm kiếm với điều kiện filter mới
+    const products = await product.find(filterObject)
+        .sort(sortBy)
+        .skip(skip)
+        .limit(limit)
+        .select(getSelectData(select))
+        .lean();
+
+    return products;
+};
+
 const findProduct = async ({ product_id, unSelect }) => {
     return await product.findById(product_id).select(unGetSelectData(unSelect))
 }
@@ -147,5 +172,5 @@ module.exports = {
     updateProductById,
     getProductById,
     findAllProductsByShop,
-    deleteProduct
+    deleteProduct, searchMulti
 }

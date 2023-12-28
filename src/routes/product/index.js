@@ -9,6 +9,8 @@ const router = express.Router()
 
 
 router.post("/search/",asyncHandler(productController.getListSearchProduct))
+router.post("/search/multi/",asyncHandler(productController.searchMulti))
+
 router.get("/",asyncHandler(productController.getAllProducts))
 router.get("/time-product",asyncHandler(productController.getProductFollowTime))
 router.get("/:product_id",asyncHandler(productController.getFindProduct))
