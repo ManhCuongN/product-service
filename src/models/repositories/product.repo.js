@@ -92,8 +92,7 @@ const findAllProducts = async ({ limit, sort, page, filter, select }) => {
 }
 
 const searchMulti = async ({ limit, sort, page, filter, select }) => {
-    console.log("limi", filter);
-
+    
     // Đảm bảo filter là một đối tượng
     const filterObject = filter || {};
 
@@ -101,6 +100,7 @@ const searchMulti = async ({ limit, sort, page, filter, select }) => {
     if (filterObject.product_price) {
         filterObject.product_price = { $lt: filterObject.product_price };
     }
+    filterObject.isPulished = true;
 
     const skip = (page - 1) * limit;
     const sortBy = sort === 'ctime' ? { _id: -1 } : { _id: 1 };
