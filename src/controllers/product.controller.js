@@ -137,6 +137,14 @@ class ProductController {
         }).send(res)
     }
 
+    updateQuantityProduct = async(req, res, next) => {
+        console.log("body",req.body);
+        new SuccessResponse({
+            message: 'Update Product Success!',
+            metadata: await ProductServiceV2.updateProductsQuantities(req.body)
+        }).send(res)
+    }
+
     
 }
 

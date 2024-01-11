@@ -88,6 +88,35 @@ class ProductFactory {
         return await unPublishProductByShop({ product_shop, product_id })
     }
 
+    static async updateProductQuantity(productId, quantity) {
+        try {
+            // Tìm sản phẩm theo ID và cập nhật số lượng bằng cách thêm vào giá trị hiện tại
+            const updatedProduct = await product.findByIdAndUpdate(
+                productId,
+                { $inc: { product_quantity: quantity } },
+                { new: true }
+            );
+             console.log("update succ", updatedProduct);
+            return updatedProduct;
+        } catch (error) {
+            throw error;
+        }
+    };
+    
+    static async updateProductsQuantities(falatArr){
+        try {
+            // Lặp qua mảng falatArr và cập nhật số lượng cho từng sản phẩm
+            const updatedProducts = await Promise.all(falatArr.map(async (item) => {
+                return await this.updateProductQuantity(item.productId, item.quantity);
+            }));
+    
+            return updatedProducts;
+        } catch (error) {
+            throw error;
+        }
+    };
+    
+
 
 
 
@@ -175,14 +204,13 @@ class ProductFactory {
     
 
     
-    static async writeDataCSVv2(data) {
-    
+    static async  writeDataCSVv2(data) {
         const filePath = 'C:/Users/nguye/Desktop/DATN/file.csv';
     
         try {
             // Kiểm tra xem tệp CSV đã tồn tại hay chưa
             if (!fs.existsSync(filePath)) {
-                // Nếu không tồn tại, tạo mới tệp CSV với header tương ứng
+                // Nếu không tồn tại, tạo mới tệp CSV với header tương ứng và UTF-8 encoding
                 const csvWriter = createCsvWriter({
                     path: filePath,
                     header: [
@@ -194,6 +222,7 @@ class ProductFactory {
                         { id: 'brand', title: 'brand' },
                         { id: 'name_product', title: 'name_product' },
                     ],
+                    encoding: 'utf-8', // Set UTF-8 encoding
                 });
     
                 // Ghi dữ liệu vào tệp CSV mới
@@ -212,22 +241,18 @@ class ProductFactory {
                     console.error('Error parsing existing CSV data:', parseError.message);
                     return;
                 }
-              
+    
                 // Kiểm tra xem ID đã tồn tại trong tệp CSV hay chưa
                 const existingItemIndex = jsonData.findIndex((item) => item.ID == data[0].ID);
     
                 if (existingItemIndex !== -1) { 
-                   
                     // Nếu ID đã tồn tại, cập nhật giá trị trong hàng hiện tại của ID đó
                     Object.entries(data[0]).forEach(([key, value]) => {
-                      
                         if (key !== 'ID') {
                             jsonData[existingItemIndex][key] += `,${value}`;
                         }
                     });
                 } else {
-                   
-
                     // Nếu ID không tồn tại, thêm một hàng mới
                     jsonData.push(data[0]);
                 }
@@ -244,6 +269,7 @@ class ProductFactory {
                         { id: 'brand', title: 'brand' },
                         { id: 'name_product', title: 'name_product' },
                     ],
+                    encoding: 'utf-8', // Set UTF-8 encoding
                 });
     
                 csvWriter.writeRecords(jsonData)
@@ -253,19 +279,15 @@ class ProductFactory {
         } catch (error) {
             console.log(error);
         }
-    };
-    
-    
-   
+    }
 
 
 
     static async writeDataCSV2() {
         const res = await axios.get("http://localhost:3055/v1/api/product")
         const dataWithPaymentMethod = res.data.metadata.map(item => {
-            return { ...item, paymentMethod: 'COD/VNPAY', Brand: item.product_attributes.brand };
-
-
+            return { ...item, paymentMethod: 'COD/VNPAY', Brand: item.product_attributes.brand ||
+            + item.product_attributes.origin };
         });
         //console.log("data",data);
         const csvWriter = await createCsvWriter({
@@ -283,8 +305,6 @@ class ProductFactory {
                 { id: 'product_slug', title: 'Product_Slug' },
                 { id: 'paymentMethod', title: 'Payment_Method' },
                 { id: 'Brand', title: 'Brand' },
-
-
             ]
         });
 
